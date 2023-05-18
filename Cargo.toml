@@ -1,0 +1,15 @@
+[package]
+name = "ruspatch"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+syn = {version="2.0", features=["full", "visit-mut"]}
+proc-macro2 = "1.0"
+quote = "1.0"
+walkdir = "2.0"
+toml = "0.7"
+take_mut = "0.2.2"
+clap = { version = "4.0", features = ["derive"] }
