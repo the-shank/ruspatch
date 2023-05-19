@@ -1,7 +1,7 @@
 #![feature(ptr_internals)]
 extern crate libc;
-use core::ptr::Unique;
 use core::ops::{Deref, DerefMut};
+use core::ptr::Unique;
 use std::mem;
 use std::ptr;
 
@@ -42,7 +42,11 @@ struct Printer(Vec<i32>);
 
 impl Drop for Printer {
     fn drop(&mut self) {
-        println!("Dropping vec: addr: {:?}, len: {}", self.0.as_ptr(), self.0.len());
+        println!(
+            "Dropping vec: addr: {:?}, len: {}",
+            self.0.as_ptr(),
+            self.0.len()
+        );
     }
 }
 
@@ -51,7 +55,7 @@ fn alloc_buggy() {
         // Allocate an uninitialized buffer, because this address have never written
         // need to use write `1` to simulate it is uninitialized memory, otherwise a
         // zero page will be read, this is different from kernel memory allocator.
-        let arr : *mut u8 = libc::malloc(mem::size_of::<Printer>()) as *mut u8;
+        let arr: *mut u8 = libc::malloc(mem::size_of::<Printer>()) as *mut u8;
         ptr::write_bytes(arr, 1, mem::size_of::<Printer>());
 
         let data = Printer(vec![1, 2, 3]);
@@ -68,7 +72,7 @@ fn alloc_patch() {
         // Allocate an uninitialized buffer, because this address have never written
         // need to use write `1` to simulate it is uninitialized memory, otherwise a
         // zero page will be read, this is different from kernel memory allocator.
-        let arr : *mut u8 = libc::malloc(mem::size_of::<Printer>()) as *mut u8;
+        let arr: *mut u8 = libc::malloc(mem::size_of::<Printer>()) as *mut u8;
         ptr::write_bytes(arr, 1, mem::size_of::<Printer>());
 
         let data = Printer(vec![1, 2, 3]);

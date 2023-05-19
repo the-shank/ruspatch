@@ -1,8 +1,8 @@
 //use std::mem::cast;
+use std::mem;
 use std::sync::{Arc, Mutex};
 use std::thread;
 use std::time;
-use std::mem;
 
 const N: usize = 10;
 
@@ -15,21 +15,18 @@ impl Drop for Printer {
     }
 }
 
-
 fn bug() {
     let shared_vec = unsafe {
-        Arc::new(Mutex::new(
-            mem::transmute::<Box<Printer>, *const ()>(Box::new(Printer(Vec::new())))
-        ))
+        Arc::new(Mutex::new(mem::transmute::<Box<Printer>, *const ()>(
+            Box::new(Printer(Vec::new())),
+        )))
     };
 
     println!("step 1");
     let vec1 = shared_vec.clone();
     {
         let mut val = vec1.lock().unwrap();
-        let mut v = unsafe {
-            mem::transmute::<*const (), Box<Printer>>(*val)
-        };
+        let mut v = unsafe { mem::transmute::<*const (), Box<Printer>>(*val) };
         v.0.push(1);
     }
 
@@ -37,9 +34,7 @@ fn bug() {
     let vec_2 = shared_vec.clone();
     {
         let mut val = vec_2.lock().unwrap();
-        let mut v = unsafe {
-            mem::transmute::<*const (), Box<Printer>>(*val)
-        };
+        let mut v = unsafe { mem::transmute::<*const (), Box<Printer>>(*val) };
         v.0.push(2);
     }
     println!("Done");
@@ -68,4 +63,3 @@ fn main() {
     bug();
     // patch();
 }
-
