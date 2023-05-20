@@ -15,7 +15,7 @@ impl Drop for Printer {
     }
 }
 
-fn bug() {
+unsafe fn bug() {
     let shared_vec = unsafe {
         Arc::new(Mutex::new(mem::transmute::<Box<Printer>, *const ()>(
             Box::new(Printer(Vec::new())),
@@ -25,7 +25,7 @@ fn bug() {
     println!("step 1");
     let vec1 = shared_vec.clone();
     {
-        let mut val = vec1.lock().unwrap();
+        let val = vec1.lock().unwrap();
         let mut v = unsafe { mem::transmute::<*const (), Box<Printer>>(*val) };
         v.0.push(1);
     }
@@ -33,7 +33,7 @@ fn bug() {
     println!("step 2");
     let vec_2 = shared_vec.clone();
     {
-        let mut val = vec_2.lock().unwrap();
+        let val = vec_2.lock().unwrap();
         let mut v = unsafe { mem::transmute::<*const (), Box<Printer>>(*val) };
         v.0.push(2);
     }
@@ -60,6 +60,8 @@ fn patch() {
 }
 
 fn main() {
-    bug();
+    unsafe {
+        bug();
+    }
     // patch();
 }
