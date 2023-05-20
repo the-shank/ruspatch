@@ -50,41 +50,39 @@ impl Drop for Printer {
     }
 }
 
-fn alloc_buggy() {
-    unsafe {
-        // Allocate an uninitialized buffer, because this address have never written
-        // need to use write `1` to simulate it is uninitialized memory, otherwise a
-        // zero page will be read, this is different from kernel memory allocator.
-        let arr: *mut u8 = libc::malloc(mem::size_of::<Printer>()) as *mut u8;
-        ptr::write_bytes(arr, 1, mem::size_of::<Printer>());
+unsafe fn alloc_buggy() {
+    // Allocate an uninitialized buffer, because this address have never written
+    // need to use write `1` to simulate it is uninitialized memory, otherwise a
+    // zero page will be read, this is different from kernel memory allocator.
+    let arr: *mut u8 = libc::malloc(mem::size_of::<Printer>()) as *mut u8;
+    ptr::write_bytes(arr, 1, mem::size_of::<Printer>());
 
-        let data = Printer(vec![1, 2, 3]);
+    let data = Printer(vec![1, 2, 3]);
 
-        let mut owned = Owned::new(arr as *mut Printer, 0);
+    let mut owned = Owned::new(arr as *mut Printer, 0);
 
-        // use deference to trigger drop random data
-        *owned = data;
-    }
+    // use deference to trigger drop random data
+    *owned = data;
 }
 
-fn alloc_patch() {
-    unsafe {
-        // Allocate an uninitialized buffer, because this address have never written
-        // need to use write `1` to simulate it is uninitialized memory, otherwise a
-        // zero page will be read, this is different from kernel memory allocator.
-        let arr: *mut u8 = libc::malloc(mem::size_of::<Printer>()) as *mut u8;
-        ptr::write_bytes(arr, 1, mem::size_of::<Printer>());
+unsafe fn alloc_patch() {
+    // Allocate an uninitialized buffer, because this address have never written
+    // need to use write `1` to simulate it is uninitialized memory, otherwise a
+    // zero page will be read, this is different from kernel memory allocator.
+    let arr: *mut u8 = libc::malloc(mem::size_of::<Printer>()) as *mut u8;
+    ptr::write_bytes(arr, 1, mem::size_of::<Printer>());
 
-        let data = Printer(vec![1, 2, 3]);
+    let data = Printer(vec![1, 2, 3]);
 
-        let ptr = arr as *mut Printer;
-        ptr::write(ptr, data);
+    let ptr = arr as *mut Printer;
+    ptr::write(ptr, data);
 
-        let mut owned = Owned::new(ptr, 0);
-    }
+    let owned = Owned::new(ptr, 0);
 }
 
 fn main() {
-    alloc_buggy();
-    // alloc_patch();
+    unsafe {
+        alloc_buggy();
+        // alloc_patch();
+    }
 }
