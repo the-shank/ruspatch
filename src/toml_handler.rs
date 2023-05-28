@@ -15,7 +15,13 @@ pub fn process() {
 
     // 在此处设置了PACKAGE_NAME
     unsafe {
-        PACKAGE_NAME = Some(toml["package"]["name"].as_str().unwrap().to_owned());
+        PACKAGE_NAME = Box::leak(
+            toml["package"]["name"]
+                .as_str()
+                .unwrap()
+                .to_owned()
+                .into_boxed_str(),
+        );
     }
 
     let dep = toml["dependencies"].as_table_mut().unwrap();
@@ -28,5 +34,5 @@ pub fn process() {
 
     let mut tomlfile_new = fs::File::create("Cargo.toml").unwrap();
     tomlfile_new.write_all(toml.to_string().as_bytes()).unwrap();
-    tomlfile_new.sync_all().unwrap();
+    tomlfile_new.sync_data().unwrap();
 }

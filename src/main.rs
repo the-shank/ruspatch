@@ -10,13 +10,13 @@ mod unsafe_block_handler;
 mod unsafe_fn_handler;
 
 #[cfg(target_os = "macos")]
-pub static SUFFIX: &str = "dylib";
+static SUFFIX: &str = "dylib";
 #[cfg(target_os = "linux")]
-pub static SUFFIX: &str = "so";
+static SUFFIX: &str = "so";
 #[cfg(target_os = "windows")]
-pub static SUFFIX: &str = "lib";
+static SUFFIX: &str = "lib";
 
-static mut PACKAGE_NAME: Option<String> = None;
+static mut PACKAGE_NAME: &str = "";
 
 #[derive(Parser, Debug)]
 struct Args {

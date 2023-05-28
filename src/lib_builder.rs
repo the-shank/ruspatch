@@ -18,17 +18,17 @@ pub fn process(filename_to_unsafe_fn_name: &HashMap<String, Vec<String>>) {
         .append(true)
         .open("Cargo.toml")
         .unwrap();
-    let pname = unsafe { PACKAGE_NAME.as_ref().unwrap().as_str() };
+    let pname = unsafe { PACKAGE_NAME };
     toml_file
         .write_all(
             format!(
-                "{} = {{ path=\"..\" }}\n\n[lib]\ncrate-type = [\"cdylib\"]",
+                "{} = {{ path=\"..\" }}\n\n[lib]\ncrate-type = [\"cdylib\"]\n\n[workspace]\n",
                 pname
             )
             .as_bytes(),
         )
         .unwrap();
-    toml_file.sync_all().unwrap();
+    toml_file.sync_data().unwrap();
 
     for (file_path, fns) in filename_to_unsafe_fn_name {
         let mut divs = file_path.split('/').skip(1).collect::<Vec<_>>();
@@ -56,7 +56,7 @@ pub fn process(filename_to_unsafe_fn_name: &HashMap<String, Vec<String>>) {
     let stt = quote!(#st);
     let mut lib_file = fs::File::create("src/lib.rs").unwrap();
     lib_file.write_all(stt.to_string().as_bytes()).unwrap();
-    lib_file.sync_all().unwrap();
+    lib_file.sync_data().unwrap();
 
     /*
     let out = Command::new("cargo")
@@ -67,19 +67,16 @@ pub fn process(filename_to_unsafe_fn_name: &HashMap<String, Vec<String>>) {
     output.write_all(&out.stderr).unwrap();
     */
     Command::new("cargo")
-        .args(["build", "--release"])
+        .args(["build"])
         .output()
-        .unwrap();
+        .expect("building temp_crate failed");
     env::set_current_dir("..").unwrap();
     fs::rename(
-        format!(
-            "./temp_crate/target/release/libtemp_crate.{}",
-            crate::SUFFIX
-        ),
+        format!("./temp_crate/target/debug/libtemp_crate.{}", crate::SUFFIX),
         format!("./lib{}.{}", pname, crate::SUFFIX),
     )
     .unwrap();
-    fs::remove_dir_all("./temp_crate").unwrap();
+    // fs::remove_dir_all("./temp_crate").unwrap();
     build_libloading();
 }
 
@@ -88,12 +85,12 @@ fn build_libloading() {
     let ts = "use lazy_static::lazy_static;";
     let item: syn::Item = syn::parse_str(ts).unwrap();
     st.items.push(item);
-    let pname = unsafe { PACKAGE_NAME.as_ref().unwrap().as_str() };
+    let pname = unsafe { PACKAGE_NAME };
     let ts = format!("lazy_static! {{ pub static ref LIB: std::sync::RwLock<Option<libloading::Library>> = unsafe {{ std::sync::RwLock::new(Some(libloading::Library::new(\"./lib{}.{}\").unwrap())) }};}}", pname, crate::SUFFIX);
     let item: syn::Item = syn::parse_str(&ts).unwrap();
     st.items.push(item);
     let stt = quote!(#st);
     let mut lib_file = fs::File::create("src/lib.rs").unwrap();
     lib_file.write_all(stt.to_string().as_bytes()).unwrap();
-    lib_file.sync_all().unwrap();
+    lib_file.sync_data().unwrap();
 }

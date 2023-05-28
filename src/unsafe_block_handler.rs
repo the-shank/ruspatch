@@ -27,7 +27,7 @@ impl VisitMut for UnsafeBlockHandler<'_> {
     fn visit_expr_unsafe_mut(&mut self, i: &mut syn::ExprUnsafe) {
         self.in_unsafe_block = true;
         visit_mut::visit_expr_unsafe_mut(self, i);
-        let pname = unsafe { PACKAGE_NAME.as_ref().unwrap().as_str() };
+        let pname = unsafe { PACKAGE_NAME };
         let ts = format!(
             "let lib_guard = {}::LIB.read().unwrap();",
             pname.replace("-", "_")
@@ -78,7 +78,7 @@ pub fn process(
             let stt = quote!(#st);
             let mut new_file = fs::File::create(path).unwrap();
             new_file.write_all(stt.to_string().as_bytes()).unwrap();
-            new_file.sync_all().unwrap();
+            new_file.sync_data().unwrap();
         }
     }
 }

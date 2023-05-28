@@ -3,7 +3,7 @@ use quote::quote;
 use std::{collections::HashMap, fs, io::Write};
 
 pub fn process(filename_to_st: &mut HashMap<String, syn::File>) {
-    let pname = unsafe { PACKAGE_NAME.as_ref().unwrap().as_str() };
+    let pname = unsafe { PACKAGE_NAME };
     let ts = format!(
         "let mut metadata = std::fs::metadata(\"./lib{}.{}\").unwrap();",
         pname,
@@ -44,7 +44,7 @@ pub fn process(filename_to_st: &mut HashMap<String, syn::File>) {
                         let stt = quote!(#st);
                         let mut new_file = fs::File::create(path).unwrap();
                         new_file.write_all(stt.to_string().as_bytes()).unwrap();
-                        new_file.sync_all().unwrap();
+                        new_file.sync_data().unwrap();
                         return;
                     }
                 }
