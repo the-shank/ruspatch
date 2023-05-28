@@ -1,9 +1,15 @@
+//! Put all unsafe functions in the outermost layer of the file (not in any block), 
+//! generate mapping [file relative path -> list of unsafe functions contained in the file] and
+//! [unsafe function name -> parameter and return value type of unsafe function], 
+//! add pub and #[no_mangle] tags to the unsafe function.
+
+
 use quote::{quote, ToTokens};
 use std::collections::HashMap;
 use syn::parse::Parser;
 use syn::visit_mut::{self, VisitMut};
 
-// 将所有的unsafe函数移到最外层。
+// Move all unsafe functions to the outermost layer.
 
 struct UnsafeFnHandler {
     unsafe_fns: Vec<syn::ItemFn>,
@@ -20,9 +26,9 @@ impl VisitMut for UnsafeFnHandler {
         take_mut::take(i, |i| match i {
             syn::Item::Fn(mut func) => {
                 if func.sig.unsafety.is_some() {
-                    // 添加“pub”
+                    // add "pub"
                     func.vis = syn::Visibility::Public(syn::token::Pub::default());
-                    // 添加“#[no_mangle]”
+                    // add "#[no_mangle]"
                     let tokens = quote!(#[no_mangle]);
                     let mut att = syn::Attribute::parse_outer.parse2(tokens).unwrap();
                     func.attrs.append(&mut att);
@@ -65,7 +71,7 @@ pub fn process(
     (res1, res2)
 }
 
-// 复制main.rs到lib.rs。
+// Copy main.rs to lib.rs
 fn copy_main(filename_to_st: &mut HashMap<String, syn::File>) {
     filename_to_st.insert(
         "src/lib.rs".to_owned(),

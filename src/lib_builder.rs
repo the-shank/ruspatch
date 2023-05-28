@@ -1,3 +1,5 @@
+//! Compile the dynamic link library
+
 use crate::PACKAGE_NAME;
 use quote::quote;
 use std::collections::HashMap;
@@ -5,7 +7,7 @@ use std::io::Write;
 use std::process::Command;
 use std::{env, fs};
 
-// 没有避免重复的use和重名函数
+// TODO: Avoid repeated uses and functions with the same name
 pub fn process(filename_to_unsafe_fn_name: &HashMap<String, Vec<String>>) {
     Command::new("cargo")
         .args(["new", "temp_crate", "--lib"])
@@ -13,7 +15,7 @@ pub fn process(filename_to_unsafe_fn_name: &HashMap<String, Vec<String>>) {
         .unwrap();
     env::set_current_dir("temp_crate").unwrap();
     let mut st = syn::parse_file("").unwrap();
-    // 避免重复引入mod
+    // Avoid duplicating mods
     let mut toml_file = fs::OpenOptions::new()
         .append(true)
         .open("Cargo.toml")

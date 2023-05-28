@@ -1,3 +1,5 @@
+//! Change all unsafe function calls in the file syntax tree to calls to functions in the dynamic link library
+
 use crate::PACKAGE_NAME;
 use quote::quote;
 use std::{
@@ -66,7 +68,7 @@ impl VisitMut for UnsafeBlockHandler<'_> {
     }
 }
 
-/// 将unsafe代码块改为对unsafe函数的调用
+/// Change the unsafe code block to a call to an unsafe function
 pub fn process(
     unsafe_fn_name_to_sig: &HashMap<String, (String, String)>,
     filename_to_st: &mut HashMap<String, syn::File>,

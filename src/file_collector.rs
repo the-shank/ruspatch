@@ -1,8 +1,9 @@
+//! Find all .rs files and generate a mapping from file relative path (src/...) to file syntax tree
 use std::{collections::HashMap, fs};
 use walkdir::WalkDir;
 
-/// 找出项目目录中所有的.rs文件。
-/// !!!无法区分找到的文件是否与项目有关联!!!。
+/// Find all .rs files in the project directory
+/// FIXME: Unable to distinguish whether a found file is associated with a project
 
 pub fn process() -> HashMap<String, syn::File> {
     let mut res = HashMap::new();

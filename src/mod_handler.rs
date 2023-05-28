@@ -1,3 +1,5 @@
+//! Change all mods in the file syntax tree to pub mods
+
 use quote::quote;
 use std::{collections::HashMap, fs, io::Write};
 use syn::visit_mut::{self, VisitMut};

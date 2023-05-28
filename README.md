@@ -1,14 +1,14 @@
 # RUSPATCH
 
-本程序将rust源代码中的unsafe函数提取编译成动态链接库，并将源代码中对unsafe函数的调用修改为动态链接库函数的调用。
+This program extracts and compiles the unsafe function in the rust source code into a dynamic link library, and modifies the call to the unsafe function in the source code into a call to a dynamic link library function
 
-#### 编译方法：
+## Build
 
 ```shell
 cargo build
 ```
 
-#### 使用方法：
+## Usage
 
 ```shell
 Usage: ruspatch [OPTIONS] <DIRECTORY>
@@ -21,46 +21,16 @@ Options:
   -h, --help  Print help
 ```
 
-成功转换后将会在项目目录中生成动态链接库文件。
+After successful conversion, a dynamic link library file will be generated in the project directory.
 
-需要手动编译修改后的源代码。
+The modified source code needs to be manually compiled.
 
-将修改后的源代码编译的二进制文件和动态链接库文件放入同一目录下可以执行。
+Put the binary file compiled by the modified source code and the dynamic link library file into the same directory for execution.
 
-#### 限制
+## Limitations
 
-1. rust项目只能编译为可执行文件（没有src/lib.rs）。
-2. 源代码中所有use语句都在文件的开头。
-3. 源代码中所有的unsafe函数不重名。
-4. 不支持范型unsafe函数。
-5. 如果unsafe函数的参数和返回值类型没有预导入，可能需要手动导入。
-
-#### 模块说明：
-
-##### toml_handler
-
-给Cargo.toml添加依赖(libloading库和lazy_static库)。
-
-##### file_collector
-
-找出所有.rs文件，生成文件相对路径（src/...）到文件语法树的映射。
-
-##### unsafe_fn_handler
-
-将文件语法树中所有的unsafe函数放在文件的最外层（不放入任何块内），生成映射``[文件相对路径 -> 文件包含的unsafe的函数列表]``和``[unsafe函数名 -> unsafe函数的参数和返回值类型）]``，同时给unsafe函数添加``pub``和``#[no_mangle]``标签。
-
-##### mod_handler
-
-将文件语法树中所有的mod改为pub mod，并写回文件。
-
-##### lib_builder
-
-编译动态链接库
-
-##### unsafe_block_handler
-
-将文件语法树中所有的unsafe函数调用改为对动态链接库中函数的调用。
-
-##### thread_injector
-
-执行线程注入。
+1. Rust projects can only be compiled to executables (no src/lib.rs).
+2. All use statements in the source code are at the beginning of the file.
+3. All unsafe functions in the source code do not have the same name.
+4. Generic unsafe functions are not supported.
+5. If the parameter and return type of the unsafe function is not pre-imported, it may need to be imported manually.

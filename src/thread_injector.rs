@@ -1,3 +1,5 @@
+//! thread injection
+
 use crate::PACKAGE_NAME;
 use quote::quote;
 use std::{collections::HashMap, fs, io::Write};

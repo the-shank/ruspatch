@@ -1,3 +1,4 @@
+//! Add dependencies to Cargo.toml
 use std::{fs, io::Write};
 use toml::Table;
 
@@ -13,7 +14,7 @@ pub fn process() {
         );
     }
 
-    // 在此处设置了PACKAGE_NAME
+    // PACKAGE_NAME
     unsafe {
         PACKAGE_NAME = Box::leak(
             toml["package"]["name"]
