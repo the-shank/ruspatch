@@ -1,0 +1,8 @@
+[dependencies]
+lazy_static = "1.4"
+libloading = "0.7"
+
+[package]
+edition = "2021"
+name = "e3"
+version = "0.1.0"
