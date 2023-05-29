@@ -2,7 +2,10 @@ use std::env;
 use std::time::Instant;
 fn main() {
     let args: Vec<String> = env::args().collect();
-    test(args[1].parse::<usize>().unwrap());
+    let bench_num = args[2].parse::<usize>().unwrap();
+    for _ in 0..bench_num{
+        test(args[1].parse::<usize>().unwrap());
+    }
 }
 fn test(ops_num: usize) {
     let arr = vec![1; 100];
@@ -19,11 +22,12 @@ fn test(ops_num: usize) {
         }
     }
     let duration = start.elapsed();
-    println!(
-        "\"offset\" op num: {},  time spend: {:?}",
-        ops_num, duration
-    );
-    println!("original sum :{}", sum);
+    println!("{}", duration.as_nanos());
+    // println!(
+    //     "\"get_unchecked\" op num: {},  time spend: {:?}",
+    //     ops_num, duration
+    // );
+    // println!("original sum :{}", sum);
 }
 unsafe fn unsafe_op(arr: *const i32) -> i32 {
     let mut res = 0;
