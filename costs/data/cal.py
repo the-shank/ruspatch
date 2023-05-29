@@ -1,10 +1,10 @@
 import pandas as pd
 
 # read the CSV file
-df = pd.read_csv('e2.csv')
-# df2 = pd.read_csv('e3-r.csv')
+df1 = pd.read_csv('e2.csv')
+df2 = pd.read_csv('e2-r.csv')
 
-# df = pd.concat([df1['before'], df2['after']], axis=1)
+df = pd.concat([df1['before'], df2['after']], axis=1)
 df['before'] = df['before'] / 1000000
 df['after'] = df['after'] / 1000000
 
