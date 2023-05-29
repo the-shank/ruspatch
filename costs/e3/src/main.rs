@@ -4,7 +4,10 @@ use std::time::Instant;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    test(args[1].parse::<usize>().unwrap());
+    let bench_num = args[2].parse::<usize>().unwrap();
+    for _ in 0..bench_num{
+        test(args[1].parse::<usize>().unwrap());
+    }
 }
 fn test(ops_num: usize) {
     let src = vec![1; 100];
@@ -18,10 +21,11 @@ fn test(ops_num: usize) {
         }
     }
     let duration = start.elapsed();
-    println!(
-        "\"copy_nonoverlapping\" op num: {},  time spend: {:?}",
-        ops_num, duration
-    );
+    println!("{}, ", duration.as_nanos());
+    // println!(
+    //     "\"get_unchecked\" op num: {},  time spend: {:?}",
+    //     ops_num, duration
+    // );
 }
 
 unsafe fn unsafe_op(src: *const i32, dst: *mut i32, count: usize) {
