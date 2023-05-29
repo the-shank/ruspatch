@@ -3,6 +3,9 @@ import pandas as pd
 # read the CSV file
 df = pd.read_csv('e1.csv')
 
+df['before'] = df['before'] / 1000000
+df['after'] = df['after'] / 1000000
+
 # calculate average and SIQR for the `before` column
 before_avg = df['before'].mean()
 before_q1 = df['before'].quantile(0.25)

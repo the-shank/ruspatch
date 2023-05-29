@@ -21,11 +21,12 @@ fn test(ops_num: usize) {
         }
     }
     let duration = start.elapsed();
-    println!(
-        "\"get_unchecked\" op num: {},  time spend: {:?}",
-        ops_num, duration
-    );
-    println!("original sum :{}", sum);
+    println!("{}", duration.as_nanos());
+    // println!(
+    //     "\"get_unchecked\" op num: {},  time spend: {:?}",
+    //     ops_num, duration
+    // );
+    // println!("original sum :{}", sum);
 }
 unsafe fn unsafe_op(arr: &[i32]) -> i32 {
     let mut res = 0;
