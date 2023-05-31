@@ -23,8 +23,6 @@ Options:
 
 After successful conversion, a dynamic link library file will be generated in the project directory.
 
-The modified source code needs to be manually compiled.
-
 Put the binary file compiled by the modified source code and the dynamic link library file into the same directory for execution.
 
 ## Limitations
